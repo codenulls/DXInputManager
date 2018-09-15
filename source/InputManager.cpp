@@ -69,22 +69,34 @@ void InputManager::ProcessInput()
         return;
     }
 
-    if (SUCCEEDED(DIKeyboard->Acquire()))
-    {
-        IsKeyBoardAcquired = true;
-    }
-    if (SUCCEEDED(DIMouse->Acquire()))
-    {
-        IsMouseAcquired = true;
-    }
-
-    DIMouse->GetDeviceState(sizeof(DIMOUSESTATE), &mouseCurrentState);
-    DIKeyboard->GetDeviceState(sizeof(keyboardState), (LPVOID)&keyboardState);
-
+    ReadKeyBoardInput();
     ProcessKeyBoardInput();
+    ReadMouseInput();
     ProcessMouseInput();
+}
 
-    return;
+void InputManager::ReadKeyBoardInput()
+{
+    HRESULT result = DIKeyboard->GetDeviceState(sizeof(keyboardState), (LPVOID)&keyboardState);
+    if (FAILED(result))
+    {
+        if ((result == DIERR_INPUTLOST) || (result == DIERR_NOTACQUIRED))
+        {
+            IsKeyBoardAcquired = SUCCEEDED(DIKeyboard->Acquire());
+        }
+    }
+}
+
+void InputManager::ReadMouseInput()
+{
+    HRESULT result = DIMouse->GetDeviceState(sizeof(DIMOUSESTATE), &mouseCurrentState);
+    if (FAILED(result))
+    {
+        if ((result == DIERR_INPUTLOST) || (result == DIERR_NOTACQUIRED))
+        {
+            IsMouseAcquired = SUCCEEDED(DIMouse->Acquire());
+        }
+    }
 }
 
 void InputManager::ProcessKeyBoardInput()

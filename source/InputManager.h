@@ -26,11 +26,12 @@ public:
     ~InputManager();
     bool Initialize();
     void ProcessInput();
+    void ReadKeyBoardInput();
+    void ReadMouseInput();
     void ProcessKeyBoardInput();
     void ProcessMouseInput();
     void UnAcquire();
     void CleanUp();
-
     void CallMouseButtonCallBack(MouseButton button, PressState state);
     void CallKeyBoardCallBack(unsigned char key, PressState state);
 
